@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Task Dashboard</h1>
+        <p id="welcomeMessage"></p>
+
+        <h2>Задача</h2>
+        <p id="taskStatus">Задача не запущена</p>
+        <p id="taskProgress">Прогрес: 0%</p>
+
+        <div id="buttonsSection">
+            <button class="button" id="startTask" onclick="startTask()">Запустити задачу</button>
+            <button class="button" id="pauseTask" onclick="pauseTask()" disabled>Призупинити задачу</button>
+            <button class="button" id="cancelTask" onclick="cancelTask()" disabled>Скасувати задачу</button>
+        </div>
+
+        <button class="button" onclick="logout()">Logout</button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Функція для перевірки, чи користувач залогінений
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+            } else {
+                document.getElementById("welcomeMessage").textContent = "Вітаємо! Ви увійшли!";
+            }
+
+            // Функція для отримання статусу задачі
+            async function getTaskStatus() {
+                try {
+                    const response = await fetch("http://localhost:8000/api/task/status", {
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById("taskStatus").textContent = data.status;
+                        document.getElementById("taskProgress").textContent = `Прогрес: ${data.progress}%`;
+                    } else {
+                        document.getElementById("taskStatus").textContent = "Не вдалося отримати статус задачі.";
+                    }
+                } catch (error) {
+                    console.error("Помилка отримання статусу задачі:", error);
+                    document.getElementById("taskStatus").textContent = "Помилка при завантаженні статусу.";
+                }
+            }
+
+            // Оновлюємо статус задачі кожні 5 секунд
+            setInterval(getTaskStatus, 5000);
+        });
+
+        // Старт задачі
+        async function startTask() {
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await fetch("http://localhost:8000/api/task", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        description: "Задача Монте-Карло"
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("taskStatus").textContent = data.status;
+                    document.getElementById("taskProgress").textContent = `Прогрес: ${data.progress}%`;
+                    document.getElementById("startTask").disabled = true;
+                    document.getElementById("pauseTask").disabled = false;
+                    document.getElementById("cancelTask").disabled = false;
+                } else {
+                    alert("Не вдалося запустити задачу");
+                }
+            } catch (error) {
+                console.error("Помилка при запуску задачі:", error);
+            }
+        }
+
+        // Призупинення задачі
+        async function pauseTask() {
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await fetch("http://localhost:8000/api/task/pause", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("taskStatus").textContent = data.status;
+                    document.getElementById("taskProgress").textContent = `Прогрес: ${data.progress}%`;
+                } else {
+                    alert("Не вдалося призупинити задачу");
+                }
+            } catch (error) {
+                console.error("Помилка при призупиненні задачі:", error);
+            }
+        }
+
+        // Скасування задачі
+        async function cancelTask() {
+            const token = localStorage.getItem("token");
+
+            try {
+                const response = await fetch("http://localhost:8000/api/task/cancel", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("taskStatus").textContent = data.status;
+                    document.getElementById("taskProgress").textContent = `Прогрес: ${data.progress}%`;
+                    document.getElementById("startTask").disabled = false;
+                    document.getElementById("pauseTask").disabled = true;
+                    document.getElementById("cancelTask").disabled = true;
+                } else {
+                    alert("Не вдалося скасувати задачу");
+                }
+            } catch (error) {
+                console.error("Помилка при скасуванні задачі:", error);
+            }
+        }
+
+        // Вихід з аккаунту
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

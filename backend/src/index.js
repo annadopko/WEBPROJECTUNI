@@ -1,30 +1,33 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./routers/main-router.js");
-const cors = require("cors");
+const taskRoutes = require("./routers/task");  // Додаємо маршрути для задач
+const cors = require("cors");  // Імпортуємо CORS
 const dotenv = require("dotenv");
 
 dotenv.config();
 
 mongoose
   .connect("mongodb://localhost/web_uni_project")
-  .then(async () => console.log("Connected to Database"))
+  .then(() => console.log("Connected to Database"))
   .catch((err) => console.log(`Error: ${err}`));
 
 const app = express();
 
-// Це якщо будеш на локалхості фронтенд мати, наприклад на реакті, щоб cors помилок не було
+// Налаштовуємо CORS, дозволяємо запити тільки з localhost:3000
+app.use(
+  cors({
+    origin: "http://localhost:3000",  // фронтенд працює на порту 3000
+    methods: ["GET", "POST"],         // дозволяємо лише GET та POST запити
+    allowedHeaders: ["Content-Type", "Authorization"],  // Дозволяємо заголовки
+  })
+);
 
-// app.use(
-//   cors({
-//     credentials: true,
-//     origin: "http://localhost:3000",
-//   })
-// );
+app.use(express.json());  // Налаштовуємо парсинг JSON
 
-app.use(express.json());
-
-app.use(routes);
+// Використовуємо маршрути для основних функцій та задач
+app.use(routes);  // Використовуємо основні маршрути
+app.use("/api/task", taskRoutes);  // Додаємо маршрути для задач
 
 const PORT = process.env.PORT || 8000;
 
