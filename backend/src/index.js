@@ -17,7 +17,7 @@ const app = express();
 // Налаштовуємо CORS, дозволяємо запити тільки з localhost:3000
 app.use(
   cors({
-    origin: ["http://localhost:3000", " http://192.168.1.152:8000"],  // Дозволяємо обидва origin
+    origin: ["http://localhost:3000", " http://192.168.1.152:8000"],  
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true  // Дозволяємо креденшали для всіх запитів
