@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const taskService = require("../services/taskService");
 
-router.post("/", async (req, res) => {
+router.post("/task/status", async (req, res) => {
     const { description, pointsLimit } = req.body; // Отримуємо pointsLimit
     const task = new Task({ description, pointsLimit, status: "pending", progress: 0 });
 
