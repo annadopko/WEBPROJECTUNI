@@ -1,4 +1,4 @@
-const Task = require('../models/taskModel'); // Змініть на відповідну модель, якщо потрібно
+const Task = require('../models/Task'); // Змініть на відповідну модель, якщо потрібно
 
 const MAX_CONCURRENT_TASKS = 5; // Максимальна кількість одночасних задач
 

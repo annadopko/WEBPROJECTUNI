@@ -17,11 +17,14 @@ const app = express();
 // Налаштовуємо CORS, дозволяємо запити тільки з localhost:3000
 app.use(
   cors({
-    origin: "http://localhost:3000",  // фронтенд працює на порту 3000
-    methods: ["GET", "POST"],         // дозволяємо лише GET та POST запити
-    allowedHeaders: ["Content-Type", "Authorization"],  // Дозволяємо заголовки
+    origin: ["http://localhost:3000", " http://192.168.1.152:8000"],  // Дозволяємо обидва origin
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true  // Дозволяємо креденшали для всіх запитів
   })
 );
+
+
 
 app.use(express.json());  // Налаштовуємо парсинг JSON
 

@@ -1,11 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
+<style>.container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.title {
+    color: #6a1b9a;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-top: 20px;
+    color: #333;
+}
+
+#buttonsSection {
+    margin-top: 20px;
+}
+
+#buttonsSection .button {
+    margin: 10px;
+    width: 200px;
+}
+
+#taskProgress {
+    margin-top: 10px;
+    color: #333;
+}
+
+#taskStatus {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.button {
+    padding: 10px;
+    font-size: 1em;
+    color: white;
+    background-color: #6a1b9a;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: #8e24aa;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}</style>
 <body>
     <div class="container">
         <h1 class="title">Task Dashboard</h1>
@@ -14,26 +75,34 @@
         <h2>Задача</h2>
         <p id="taskStatus">Задача не запущена</p>
         <p id="taskProgress">Прогрес: 0%</p>
-
+        
+        <!-- Додаємо поле для введення кількості точок -->
+        <label for="pointsLimit">Кількість точок:</label>
+        <input type="number" id="pointsLimit" class="input" placeholder="Введіть кількість точок" required>
+        
         <div id="buttonsSection">
             <button class="button" id="startTask" onclick="startTask()">Запустити задачу</button>
             <button class="button" id="pauseTask" onclick="pauseTask()" disabled>Призупинити задачу</button>
             <button class="button" id="cancelTask" onclick="cancelTask()" disabled>Скасувати задачу</button>
         </div>
+        <button class="button" onclick="handleLogout()">Logout</button>
 
-        <button class="button" onclick="logout()">Logout</button>
+
+        
     </div>
 
+    <script>
+        // Перевіряємо наявність токена в localStorage
+        if (!localStorage.getItem("token")) {
+            // Якщо токен не знайдено, перенаправляємо на сторінку логіну
+            window.location.href = "login.html";
+        }
+    </script>
     <script src="app.js"></script>
     <script>
         // Функція для перевірки, чи користувач залогінений
         document.addEventListener("DOMContentLoaded", () => {
             const token = localStorage.getItem("token");
-            if (!token) {
-                window.location.href = "login.html";
-            } else {
-                document.getElementById("welcomeMessage").textContent = "Вітаємо! Ви увійшли!";
-            }
 
             // Функція для отримання статусу задачі
             async function getTaskStatus() {
@@ -65,6 +134,12 @@
         // Старт задачі
         async function startTask() {
             const token = localStorage.getItem("token");
+            const pointsLimit = document.getElementById("pointsLimit").value; // Отримуємо кількість точок
+
+            if (!pointsLimit || pointsLimit <= 0) {
+                alert("Будь ласка, введіть правильну кількість точок.");
+                return;
+            }
 
             try {
                 const response = await fetch("http://localhost:8000/api/task", {
@@ -74,7 +149,8 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        description: "Задача Монте-Карло"
+                        description: "Задача Монте-Карло",
+                        pointsLimit: pointsLimit // Передаємо кількість точок на сервер
                     })
                 });
 

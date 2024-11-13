@@ -1,20 +1,20 @@
 {
-  "name": "frontend",
-  "version": "1.0.0",
-  "description": "Frontend for the Web Project",
-  "main": "app.js",
-  "scripts": {
-    "start:dev": "http-server ./src -p 8000",
-    "start": "http-server ./src -p 8000",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "http-server": "^0.12.3"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.7"
+    "name": "frontend",
+    "version": "1.0.0",
+    "description": "Frontend for the Web Project",
+    "main": "app.js",
+    "scripts": {
+      "start:dev": "http-server ./src -p 8000",
+      "start": "http-server ./src -p 8000",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "http-server": "^0.12.3"
+    },
+    "devDependencies": {
+      "nodemon": "^3.1.7"
+    }
   }
-}

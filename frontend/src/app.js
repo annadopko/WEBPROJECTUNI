@@ -1,3 +1,4 @@
+localStorage.removeItem("token");
 const API_URL = "http://localhost:8000/api/auth";
 
 // Функція для логіки на сторінці логіну
@@ -8,16 +9,17 @@ async function handleLogin(event) {
     const messageElement = document.getElementById("message");
 
     try {
-        const response = await fetch(`${API_URL}/login`, { 
+        const response = await fetch("http://localhost:8000/api/auth/login", { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
+            credentials: "include"
         });
 
         if (response.ok) {
             const { accessToken } = await response.json();
             localStorage.setItem("token", accessToken); // Зберігаємо JWT в локальному сховищі
-            window.location.href = "index.html"; // Переходимо на головну сторінку після успіху
+            window.location.href = "main.html"; // Переходимо на головну сторінку після успіху
         } else {
             const error = await response.json();
             console.error("Login error:", error); // Логування помилки
@@ -38,15 +40,17 @@ async function handleRegister(event) {
     const messageElement = document.getElementById("message");
 
     try {
-        const response = await fetch(`${API_URL}/register`, {
+        const response = await fetch("http://localhost:8000/api/auth/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
+            credentials: "include"
         });
 
         if (response.ok) {
-            messageElement.textContent = "Registration successful! You can now log in.";
-            messageElement.style.color = "green";
+            const { accessToken } = await response.json();
+            localStorage.setItem("token", accessToken); // Зберігаємо JWT в локальному сховищі
+            window.location.href = "main.html"; // Переходимо на головну сторінку після успіху
         } else {
             const error = await response.json();
             console.error("Registration error:", error); // Логування помилки
@@ -60,6 +64,7 @@ async function handleRegister(event) {
 
 // Вибір функції залежно від сторінки
 document.addEventListener("DOMContentLoaded", () => {
+   
     if (document.getElementById("loginForm")) {
         document.getElementById("loginForm").addEventListener("submit", handleLogin);
     } else if (document.getElementById("registerForm")) {
@@ -79,6 +84,13 @@ async function checkTaskProgress(taskId) {
     }
 }
 
+function handleLogout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+}
+
+
+
 // Викликайте цю функцію з інтервалом у 2 секунди
 const taskId = "ID_ЗАДАЧІ"; // Отримайте ID задачі, яку створили
-setInterval(() => checkTaskProgress(taskId), 2000);
+//setInterval(() => checkTaskProgress(taskId), 2000);

@@ -1,10 +1,18 @@
-const { Router } = require("express");
-const taskController = require("../controllers/taskController");
+const express = require("express");
+const router = express.Router();
+const taskService = require("../services/taskService");
 
-const router = Router();
+router.post("/", async (req, res) => {
+    const { description, pointsLimit } = req.body; // Отримуємо pointsLimit
+    const task = new Task({ description, pointsLimit, status: "pending", progress: 0 });
 
-router.post("/start", taskController.startTask);
-router.post("/cancel", taskController.cancelTask);
-router.get("/:taskId/progress", taskController.getTaskStatus);
+    try {
+        await task.save();
+        taskService.executeTask(task._id, pointsLimit);  // Передаємо pointsLimit у taskService
+        res.status(201).json(task);
+    } catch (error) {
+        res.status(500).json({ message: "Error starting task" });
+    }
+});
 
 module.exports = router;
